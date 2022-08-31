@@ -1,0 +1,102 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Alphabetiser APP Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Alphabetiser APP</h1>
+    <form action="/#">
+        <div class="form-row">
+
+            <div class="col-md-4 mb-3" style="text-align:left" id="diver">
+                <input type="text" class="form-control" id="input1" placeholder="input1">
+                <br />
+                <input type="text" class="form-control" id="input2" placeholder="input2">
+                <br />
+            </div>
+
+            <div class="col-md-4 mb-3" style="text-align:left">
+                <button type="submit" class="btn btn-primary" id="addNewField" onclick="createNewField()">Add new field</button> &nbsp; &nbsp;
+                <button type="submit" class="btn btn-secondary" onclick="reOrderExistingFields()">ReOrder field</button>
+            </div>
+        </div>
+    </form>
+
+
+    <script type="text/JavaScript">
+        var listOfNodes = [];
+        var unSortedList = [];
+
+        function createNewField() {
+            listOfNodes = [];
+            unSortedList = [];
+            // First create a DIV element.
+            var div = document.getElementById('diver');
+            var counter = div.getElementsByTagName("input").length;
+            counter++
+            var deleteBtn = '<button type="submit" class="btn btn-secondary" id="delete' + counter + '" onclick="removeField(' + counter + ')">Delete</button>';
+
+            var newTextBox = '<input type="text" class="form-control" id="input' + counter + '" placeholder="input' + counter + '" >' + deleteBtn + '<br id="break' + counter + '" >';
+            div.innerHTML += newTextBox;
+
+            for (let i = 1; i <= counter; i++) {
+                let text = document.getElementById('input' + i).value
+                const person = { count: i, id: 'input' + i, textValue: text };
+                listOfNodes.push(person);
+                unSortedList.push(i);
+            }
+
+
+        }
+        function removeField(fieldId) {
+            var div = document.getElementById('diver');
+            var element = document.getElementById("input" + fieldId);
+            var deletebtn = document.getElementById("delete" + fieldId);
+            var breakbtn = document.getElementById("break" + fieldId);
+
+            div.removeChild(element);
+            div.removeChild(deletebtn);
+            div.removeChild(breakbtn);
+
+            listOfNodes.pop(listOfNodes[fieldId]);
+            unSortedList.pop(fieldId);
+        }
+
+        function reOrderExistingFields() {
+            // console.log('reorder existing fields')
+            // console.log(JSON.stringify(listOfNodes))
+            if (listOfNodes.length == 0) {
+                var counter = document.getElementById('diver').getElementsByTagName("input").length;
+                console.log('count' + counter);
+                for (let i = 1; i <= counter; i++) {
+                    let text = document.getElementById('input' + i).value;
+                    const texbox = { count: i, id: 'input' + i, textValue: text };
+                    listOfNodes.push(texbox);
+                    unSortedList.push(i);
+                }
+            }
+            else {
+                listOfNodes = [];
+                unSortedList = [];
+                var counter = document.getElementById('diver').getElementsByTagName("input").length;
+                for (let i = 1; i <= counter; i++) {
+                    let text = document.getElementById('input' + i).value;
+                    const texbox = { count: i, id: 'input' + i, textValue: text };
+                    listOfNodes.push(texbox);
+                    unSortedList.push(i);
+                }
+            }
+
+            listOfNodes.sort((a, b) => a.textValue !== b.textValue ? a.textValue < b.textValue ? -1 : 1 : 0);
+
+            for (let i = 0; i < unSortedList.length; i++) {
+                let idValue = unSortedList[i];
+                var textData = listOfNodes[idValue - 1];
+                let text = textData['textValue'];
+                document.getElementById('input' + idValue).value = text;
+            }
+        }
+
+    </script>
+</div>
